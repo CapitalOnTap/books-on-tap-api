@@ -37,5 +37,19 @@ namespace Models
         {
             return Books.Find(x => x.Title == book.Title);
         }
+
+        public void Delete(Book book)
+        {
+            Books.Remove(book);
+        }
+
+        public Book Update(Book bookToUpdate)
+        {
+            var index = Books.IndexOf(bookToUpdate);
+
+            Books[index] = bookToUpdate;
+
+            return Books[index];
+        }
     }
 }

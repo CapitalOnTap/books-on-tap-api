@@ -25,7 +25,6 @@ namespace fish_api.Controllers
         /// <summary>
         /// Gets all books.
         /// </summary>
-        /// <returns>A newly created TodoItem</returns>
         /// <response code="200">Returns array of books</response>
         [HttpGet]
         public IActionResult Get()
@@ -81,14 +80,41 @@ namespace fish_api.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(Guid id, [FromBody]string value)
+        public IActionResult Put(Guid id, [FromBody]Book book)
         {
+            var bookToUpdate = _repository.GetById(id);
+
+            if (bookToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            var result = _repository.Update(bookToUpdate);
+
+            if (result == null)
+            {
+                return StatusCode(500);
+            }
+            return Ok(result);
+
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public IActionResult Delete(Guid id)
         {
+
+            var toDelete = _repository.GetById(id);
+
+
+            if (toDelete == null)
+            {
+                return NotFound();
+            }
+
+            _repository.Delete(toDelete);
+
+            return Ok(200);
         }
     }
 }
