@@ -114,7 +114,7 @@ namespace fish_api.Controllers
 
             _repository.Delete(toDelete);
 
-            return Ok(200);
+            return Ok();
         }
     }
 }
