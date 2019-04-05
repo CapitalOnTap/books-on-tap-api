@@ -5,11 +5,13 @@ namespace Models
 {
     public class Repository : IRepository
     {
-        public List<Book> Books { get; set; }
+        private List<Book> Books { get; set; }
+        private List<Author> Authors { get; set; }
 
-        public Repository(List<Book> books)
+        public Repository(List<Book> books, List<Author> authors)
         {
             Books = books;
+            Authors = authors;
         }
 
         public Book GetById(Guid id)
@@ -17,9 +19,9 @@ namespace Models
             return Books.Find(x => x.Id == id);
         }
 
-        public Book GetByAuthorId(Guid authorId)
+        public Author GetAuthorById(Guid authorId)
         {
-            return Books.Find(x => x.Author.Id == authorId);
+            return Authors.Find(x => x.Id == authorId);
         }
 
         public void Add(Book book)
@@ -50,6 +52,11 @@ namespace Models
             Books[index] = bookToUpdate;
 
             return Books[index];
+        }
+
+        public Book GetByISBN(string isbn)
+        {
+            return Books.Find(x => x.ISBN == isbn);
         }
     }
 }

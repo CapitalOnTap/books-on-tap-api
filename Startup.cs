@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Helpers;
 
 namespace books_api
 {
@@ -29,7 +30,7 @@ namespace books_api
             // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Books API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Books On Tap API", Version = "v1" });
             });
 
             var author1 = new Author
@@ -62,8 +63,9 @@ namespace books_api
                     Author = author1,
                     Description = "Nulla sunt sunt pariatur officia et esse fugiat proident est. Ad laboris ullamco adipisicing nisi in ex. Magna voluptate culpa velit exercitation nisi ipsum est do.",
                     Price = 10.0,
-                    IsInStock = true,
-                    Preview = "https://images.unsplash.com/photo-1496484805162-42c00f79cdce?dpr=1&auto=format&fit=crop&w=568&h=379&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D"
+                    StockAmount = 0,
+                    Thumbnail = "https://images.unsplash.com/photo-1496484805162-42c00f79cdce?dpr=1&auto=format&fit=crop&w=568&h=379&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+                    ISBN = IsbnGenerator.Get13Digits(),
                 },
                 new Book
                 {
@@ -72,8 +74,9 @@ namespace books_api
                     Author = author2,
                     Description = "Nulla sunt sunt pariatur officia et esse fugiat proident est. Ad laboris ullamco adipisicing nisi in ex. Magna voluptate culpa velit exercitation nisi ipsum est do.",
                     Price = 48,
-                    IsInStock = true,
-                    Preview = "https://images.unsplash.com/photo-1453733190371-0a9bedd82893?dpr=1&auto=format&fit=crop&w=568&h=426&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D"
+                    StockAmount = 2,
+                    Thumbnail = "https://images.unsplash.com/photo-1453733190371-0a9bedd82893?dpr=1&auto=format&fit=crop&w=568&h=426&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+                     ISBN = IsbnGenerator.Get13Digits(),
                 }
                 ,
                 new Book
@@ -83,12 +86,20 @@ namespace books_api
                     Author = author3,
                     Description = "Nulla sunt sunt pariatur officia et esse fugiat proident est. Ad laboris ullamco adipisicing nisi in ex. Magna voluptate culpa velit exercitation nisi ipsum est do.",
                     Price = 22,
-                    IsInStock = false,
-                    Preview = "https://images.unsplash.com/photo-1453733190371-0a9bedd82893?dpr=1&auto=format&fit=crop&w=568&h=426&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D"
+                    StockAmount = 5,
+                    Thumbnail = "https://images.unsplash.com/photo-1453733190371-0a9bedd82893?dpr=1&auto=format&fit=crop&w=568&h=426&q=60&cs=tinysrgb&ixid=dW5zcGxhc2guY29tOzs7Ozs%3D",
+                     ISBN = IsbnGenerator.Get13Digits(),
                 }
             };
 
-            services.AddSingleton<IRepository>(new Repository(books));
+
+            var authors = new List<Author>{
+                author1,
+                author2,
+                author3
+            };
+
+            services.AddSingleton<IRepository>(new Repository(books, authors));
 
             services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
             {

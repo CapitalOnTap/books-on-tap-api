@@ -66,16 +66,34 @@ namespace fish_api.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody]Book newBook)
+        public IActionResult Post([FromBody]CreateBookRequest newBook)
         {
-            if (_repository.Find(newBook) != null)
+            var existingBook = _repository.GetByISBN(newBook.ISBN);
+            if (existingBook != null)
             {
-                return StatusCode(409);
+                existingBook.StockAmount++;
+                _repository.Update(existingBook);
+
+                return Ok(existingBook);
             };
 
-            _repository.Add(newBook);
+            var book = new Book
+            {
+                Title = newBook.Title,
+                Description = newBook.Description,
+                ISBN = newBook.ISBN,
+                Thumbnail = newBook.Thumbnail,
+                StockAmount = newBook.StockAmount,
+                Price = newBook.Price,
+                Author = _repository.GetAuthorById(newBook.AuthorId),
+            };
 
-            return CreatedAtRoute("", new { id = newBook.Id }, newBook);
+            _repository.Add(book);
+
+            return CreatedAtRoute("", new
+            {
+                id = book.Id
+            }, newBook);
         }
 
         // PUT api/values/5
@@ -95,15 +113,14 @@ namespace fish_api.Controllers
             {
                 return StatusCode(500);
             }
-            return Ok(result);
 
+            return Ok(result);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-
             var toDelete = _repository.GetById(id);
 
 
